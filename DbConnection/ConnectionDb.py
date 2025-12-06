@@ -1,6 +1,6 @@
 import configparser
-import pymysql
-from pymysql.err import MySQLError
+import pymysql  # type: ignore
+from pymysql.err import MySQLError  # type: ignore
 
 class ConnectionDB:
     """
