@@ -3,6 +3,7 @@ from lib.AdminManagementLib import AdminManagementLib
 from lib.ReceptionistManagementLib import ReceptionistManagementLib
 from lib.PharmacistManagementLib import PharmacistManagementLib
 from lib.LabTechnicianManagementLib import LabTechnicianManagementLib
+from lib.DoctorManagementLib import DoctorManagementLib
 
 
 # from lib.DoctorManagementLib import DoctorManagementLib  # when you implement doctor logic
@@ -80,6 +81,32 @@ def doctor_menu(user):
         if choice == "0":
             print("Logging out from Doctor...")
             break
+        elif choice == "1":
+            DoctorManagementLib.view_my_appointments(user)
+        elif choice == "2":
+            DoctorManagementLib.record_consultation_notes(user)
+
+        elif choice == "3":
+            DoctorManagementLib.prescribe_medication(user)
+
+        elif choice == "4":
+            DoctorManagementLib.prescribe_lab_tests(user)
+
+        elif choice == "5":
+            DoctorManagementLib.view_patient_history()
+
+        elif choice == "6":
+            DoctorManagementLib.record_patient_vitals(user)
+
+        elif choice == "7":
+            DoctorManagementLib.review_lab_results(user)
+
+        elif choice == "8":
+            DoctorManagementLib.recommend_followup()
+
+        elif choice == "9":
+            DoctorManagementLib.update_diagnosis()
+
         else:
             print("Doctor features not implemented yet in this version.")
 
