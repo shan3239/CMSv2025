@@ -89,7 +89,7 @@ class PharmacistValidation:
         if not days.isdigit():
             return False
         days = int(days)
-        return 1 <= days <= 365
+        return 1 <= days <= 600
 
     # ---------- DISPENSE ----------
 

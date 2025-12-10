@@ -1,3 +1,4 @@
+
 from datetime import datetime
 from dao.PharmacistDaoImpl import PharmacistDaoImpl
 from validation.Pharmacist_Validation import PharmacistValidation
@@ -30,26 +31,37 @@ class PharmacistManagementLib:
     def add_medicine():
         print("\n--- Add New Medicine ---")
 
-        name = input("Medicine Name: ").strip()
-        if not PharmacistValidation.validate_medicine_name(name):
-            print("❌ Invalid Medicine Name"); return
+        while True:
+            name = input("Medicine Name: ").strip()
+            if PharmacistValidation.validate_medicine_name(name):
+                break
+            print("❌ Invalid Medicine Name")
 
-        category = input("Category (Antibiotic/Analgesic etc): ").strip()
-        if not PharmacistValidation.validate_category(category):
-            print("❌ Invalid Category"); return
+        while True:
+            category = input("Category (Antibiotic/Analgesic etc): ").strip()
+            if PharmacistValidation.validate_category(category):
+                break
+            print("❌ Invalid Category")
 
-        form = input("Form (Tablet/Capsule/etc): ").strip()
-        if not PharmacistValidation.validate_form(form):
-            print("❌ Invalid Form"); return
+        while True:
+            form = input("Form (Tablet/Capsule/etc): ").strip()
+            if PharmacistValidation.validate_form(form):
+                break
+            print("❌ Invalid Form")
 
-        strength = input("Strength (e.g., 500mg): ").strip()
-        if not PharmacistValidation.validate_strength(strength):
-            print("❌ Invalid Strength"); return
+        while True:
+            strength = input("Strength (e.g., 500mg): ").strip()
+            if PharmacistValidation.validate_strength(strength):
+                break
+            print("❌ Invalid Strength")
 
-        if not PharmacistValidation.validate_duplicate_medicine(
-            name, form, strength, PharmacistManagementLib.dao
-        ):
-            print("❌ Duplicate Medicine Exists"); return
+        while True:
+            if PharmacistValidation.validate_duplicate_medicine(
+                name, form, strength, PharmacistManagementLib.dao
+            ):
+                break
+            print("❌ Duplicate Medicine Exists")
+            strength = input("Re-enter Strength (or change Name/Form): ").strip()
 
         med_data = {
             "medicine_name": name,
@@ -69,28 +81,38 @@ class PharmacistManagementLib:
         print("\n--- Add Medicine Batch ---")
         PharmacistManagementLib.view_medicine_inventory()
 
-        mid = input("Medicine ID: ").strip()
-        if not PharmacistValidation.validate_medicine_id(mid, PharmacistManagementLib.dao):
-            print("❌ Invalid Medicine ID"); return
-        medicine_id = int(mid)
+        while True:
+            mid = input("Medicine ID: ").strip()
+            if PharmacistValidation.validate_medicine_id(mid, PharmacistManagementLib.dao):
+                medicine_id = int(mid)
+                break
+            print("❌ Invalid Medicine ID")
 
-        batch = input("Batch Number: ").strip()
-        if not PharmacistValidation.validate_batch_number(batch, medicine_id, PharmacistManagementLib.dao):
-            print("❌ Batch number invalid or duplicate"); return
+        while True:
+            batch = input("Batch Number: ").strip()
+            if PharmacistValidation.validate_batch_number(batch, medicine_id, PharmacistManagementLib.dao):
+                break
+            print("❌ Batch number invalid or duplicate")
 
-        expiry = input("Expiry Date (YYYY-MM-DD): ").strip()
-        if not PharmacistValidation.validate_expiry_date(expiry):
-            print("❌ Invalid Expiry Date"); return
+        while True:
+            expiry = input("Expiry Date (YYYY-MM-DD): ").strip()
+            if PharmacistValidation.validate_expiry_date(expiry):
+                break
+            print("❌ Invalid Expiry Date")
 
-        qty = input("Quantity on Hand: ").strip()
-        if not PharmacistValidation.validate_quantity(qty):
-            print("❌ Invalid Quantity"); return
-        qty = int(qty)
+        while True:
+            qty = input("Add Quantity: ").strip()
+            if PharmacistValidation.validate_quantity(qty):
+                qty = int(qty)
+                break
+            print("❌ Invalid Quantity")
 
-        reorder = input("Reorder Level (optional): ").strip()
-        if not PharmacistValidation.validate_reorder_level(reorder):
-            print("❌ Invalid Reorder Level"); return
-        reorder_level = int(reorder) if reorder.strip() else None
+        while True:
+            reorder = input("Reorder Level (optional): ").strip()
+            if PharmacistValidation.validate_reorder_level(reorder):
+                reorder_level = int(reorder) if reorder.strip() else None
+                break
+            print("❌ Invalid Reorder Level")
 
         batch_data = {
             "medicine_id": medicine_id,
@@ -121,13 +143,17 @@ class PharmacistManagementLib:
     @staticmethod
     def view_near_expiry():
         print("\n--- Near-Expiry Medicines ---")
-        days = input("Days (1–365): ").strip()
-        if not PharmacistValidation.validate_days(days):
-            print("❌ Invalid Days"); return
+        while True:
+            days = input("Days (1-any days): ").strip()
+            if PharmacistValidation.validate_days(days):
+                days = int(days)
+                break
+            print("❌ Invalid Days")
 
-        batches = PharmacistManagementLib.dao.list_near_expiry_batches(int(days))
+        batches = PharmacistManagementLib.dao.list_near_expiry_batches(days)
         if not batches:
-            print("No near-expiry batches."); return
+            print("No near-expiry batches.")
+            return
 
         for b in batches:
             print(f"{b['medicine_name']} | {b['batch_number']} | Exp {b['expiry_date']}")
@@ -139,7 +165,8 @@ class PharmacistManagementLib:
         print("\n--- Expired Medicines ---")
         batches = PharmacistManagementLib.dao.list_expired_batches()
         if not batches:
-            print("No expired batches."); return
+            print("No expired batches.")
+            return
 
         for b in batches:
             print(f"{b['medicine_name']} | {b['batch_number']} | Exp {b['expiry_date']}")
@@ -151,11 +178,14 @@ class PharmacistManagementLib:
         print("\n--- Remove / Mark Expired Batch ---")
         PharmacistManagementLib.view_expired()
 
-        bid = input("Batch ID: ").strip()
-        if not PharmacistValidation.validate_expire_batch(bid):
-            print("❌ Invalid Batch ID"); return
+        while True:
+            bid = input("Batch ID: ").strip()
+            if PharmacistValidation.validate_expire_batch(bid):
+                bid = int(bid)
+                break
+            print("❌ Invalid Batch ID")
 
-        ok = PharmacistManagementLib.dao.mark_batch_expired(int(bid))
+        ok = PharmacistManagementLib.dao.mark_batch_expired(bid)
         print("✅ Marked expired" if ok else "❌ Failed")
 
     # ---------- Return to Supplier ----------
@@ -165,11 +195,14 @@ class PharmacistManagementLib:
         print("\n--- Mark Batch as Return to Supplier ---")
         PharmacistManagementLib.view_expired()
 
-        bid = input("Batch ID: ").strip()
-        if not PharmacistValidation.validate_return_batch(bid):
-            print("❌ Invalid Batch ID"); return
+        while True:
+            bid = input("Batch ID: ").strip()
+            if PharmacistValidation.validate_return_batch(bid):
+                bid = int(bid)
+                break
+            print("❌ Invalid Batch ID")
 
-        ok = PharmacistManagementLib.dao.mark_batch_return_to_supplier(int(bid))
+        ok = PharmacistManagementLib.dao.mark_batch_return_to_supplier(bid)
         print("✅ Returned to supplier" if ok else "❌ Failed")
 
     # ---------- Dispense ----------
@@ -178,25 +211,30 @@ class PharmacistManagementLib:
     def dispense_medication(user):
         print("\n--- Dispense Medication ---")
 
-        pid = input("Prescription ID: ").strip()
-        if not PharmacistValidation.validate_prescription_id(pid):
-            print("❌ Invalid Prescription ID"); return
-        pid = int(pid)
+        while True:
+            pid = input("Prescription ID: ").strip()
+            if PharmacistValidation.validate_prescription_id(pid):
+                pid = int(pid)
+                break
+            print("❌ Invalid Prescription ID")
 
         header = PharmacistManagementLib.dao.get_prescription_header(pid)
         if not header:
-            print("❌ Prescription not found."); return
+            print("❌ Prescription not found.")
+            return
 
         items = PharmacistManagementLib.dao.get_prescription_items(pid)
         if not items:
-            print("No items found."); return
+            print("No items found.")
+            return
 
         for item in items:
             print(f"{item['medicine_name']} | {item['dosage']} | {item['frequency']}")
 
             batches = PharmacistManagementLib.dao.get_available_batches_for_medicine(item["medicine_id"])
             if not batches:
-                print("⚠ No stock."); continue
+                print("⚠ No stock.")
+                continue
 
             for b in batches:
                 print(f"Batch {b['batch_id']} | Qty {b['quantity_on_hand']}")
@@ -204,17 +242,23 @@ class PharmacistManagementLib:
             if input("Dispense? (y): ").lower() != "y":
                 continue
 
-            bid = input("Batch ID: ").strip()
-            if not PharmacistValidation.validate_batch_choice(bid, batches):
-                print("❌ Invalid Batch"); continue
-            bid = int(bid)
+            while True:
+                bid = input("Batch ID: ").strip()
+                if PharmacistValidation.validate_batch_choice(bid, batches):
+                    bid = int(bid)
+                    break
+                print("❌ Invalid Batch")
 
             max_qty = next(b["quantity_on_hand"] for b in batches if b["batch_id"] == bid)
-            qty = input("Quantity: ").strip()
-            if not PharmacistValidation.validate_dispense_quantity(qty, max_qty):
-                print("❌ Invalid Quantity"); continue
+
+            while True:
+                qty = input("Quantity: ").strip()
+                if PharmacistValidation.validate_dispense_quantity(qty, max_qty):
+                    qty = int(qty)
+                    break
+                print("❌ Invalid Quantity")
 
             ok = PharmacistManagementLib.dao.dispense_medicine(
-                item["prescription_item_id"], bid, int(qty), user.staff_id
+                item["prescription_item_id"], bid, qty, user.staff_id
             )
             print("✅ Dispensed" if ok else "❌ Failed")
